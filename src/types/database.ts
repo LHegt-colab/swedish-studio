@@ -292,6 +292,44 @@ export interface Database {
                     created_at?: string
                 }
             }
+            verb_conjugations: {
+                Row: {
+                    id: string
+                    user_id: string
+                    group_name: string
+                    infinitive: string
+                    present: string
+                    past: string
+                    supine: string
+                    future: string
+                    translation: string | null
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    user_id?: string
+                    group_name: string
+                    infinitive: string
+                    present: string
+                    past: string
+                    supine: string
+                    future: string
+                    translation?: string | null
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    user_id?: string
+                    group_name?: string
+                    infinitive?: string
+                    present?: string
+                    past?: string
+                    supine?: string
+                    future?: string
+                    translation?: string | null
+                    created_at?: string
+                }
+            }
         }
     }
 }
@@ -304,3 +342,4 @@ export type PronunciationItem = Database['public']['Tables']['pronunciation_item
 export type PronunciationRecording = Database['public']['Tables']['pronunciation_recordings']['Row']
 export type UserGoal = Database['public']['Tables']['user_goals']['Row']
 export type VocabItem = Database['public']['Tables']['vocab_items']['Row']
+export type VerbConjugation = Database['public']['Tables']['verb_conjugations']['Row']

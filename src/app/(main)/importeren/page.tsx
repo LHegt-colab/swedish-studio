@@ -9,6 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { toast } from 'sonner'
 import { Loader2, Upload } from 'lucide-react'
+import Link from 'next/link'
 
 // VOCAB FIELDS from previous implementation
 const VOCAB_FIELDS = [
@@ -21,7 +22,7 @@ const VOCAB_FIELDS = [
 ]
 
 export default function ImportPage() {
-    const [mode, setMode] = useState<'vocab' | 'grammar' | 'reading'>('vocab')
+    const [mode, setMode] = useState<'vocab' | 'grammar' | 'reading' | 'verbs'>('vocab')
     const [file, setFile] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
     const [wb, setWb] = useState<XLSX.WorkBook | null>(null)
@@ -288,6 +289,7 @@ export default function ImportPage() {
                     <TabsTrigger value="vocab">Woordjes</TabsTrigger>
                     <TabsTrigger value="grammar">Grammatica</TabsTrigger>
                     <TabsTrigger value="reading">Lezen</TabsTrigger>
+                    <TabsTrigger value="verbs">Werkwoorden</TabsTrigger>
                 </TabsList>
 
                 <div className="mt-6">
@@ -297,10 +299,20 @@ export default function ImportPage() {
                                 {mode === 'vocab' && 'Upload Woordjes Excel'}
                                 {mode === 'grammar' && 'Upload Grammatica Excel'}
                                 {mode === 'reading' && 'Upload Lezen Excel'}
+                                {mode === 'verbs' && 'Werkwoorden Importeren'}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <Input type="file" accept=".xlsx, .xls" onChange={handleFile} />
+                            {mode === 'verbs' ? (
+                                <div className="text-center py-8 space-y-4">
+                                    <p>Gebruik de speciale tool om werkwoorden direct uit Excel te kopiëren.</p>
+                                    <Link href="/importeren/werkwoorden">
+                                        <Button size="lg">Open Werkwoorden Tool</Button>
+                                    </Link>
+                                </div>
+                            ) : (
+                                <Input type="file" accept=".xlsx, .xls" onChange={handleFile} />
+                            )}
 
                             {mode === 'grammar' && (
                                 <div className="text-sm bg-muted p-4 rounded text-muted-foreground">

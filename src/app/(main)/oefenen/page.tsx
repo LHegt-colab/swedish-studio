@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Link from 'next/link'
 
 export default function PracticeSetupPage() {
     const [mode, setMode] = useState("choice")
@@ -58,6 +59,20 @@ export default function PracticeSetupPage() {
                     </Button>
                 </CardContent>
             </Card>
-        </div>
+
+            <Card className="border-t-4 border-t-blue-500">
+                <CardHeader>
+                    <CardTitle>Speciale Modules</CardTitle>
+                </CardHeader>
+                <CardContent className="grid gap-4 md:grid-cols-2">
+                    <Link href="/oefenen/werkwoorden" className="block group">
+                        <div className="border rounded-lg p-4 hover:bg-accent transition-colors">
+                            <h3 className="font-bold text-lg mb-2 group-hover:text-primary">Werkwoorden (5 Tijden)</h3>
+                            <p className="text-sm text-muted-foreground">Oefen de volledige vervoeging van werkwoorden: Infinitief, Presens, Preteritum, Perfekt, Futurum.</p>
+                        </div>
+                    </Link>
+                </CardContent>
+            </Card>
+        </div >
     )
 }
