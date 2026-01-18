@@ -44,37 +44,39 @@ export function PracticeSession() {
         load()
     }, [])
 
-    useEffect(() => {
-        if (status === 'answering' && queue.length > 0 && currentIndex < queue.length) {
-            generateOptions()
-            setCurrentAnswer("")
-        }
-    }, [currentIndex, queue, status])
-
-    const currentItem = queue[currentIndex]
-
-    // Check effective mode (mix picks random for each question)
-    const effectiveMode = modeParam === 'mix'
-        ? (Math.random() > 0.5 ? 'choice' : 'type')
-        : modeParam
+    const [questionMode, setQuestionMode] = useState<string>('choice')
 
     const targetLang = directionParam === 'sv_nl' ? 'nl' : 'sv'
     const sourceLang = directionParam === 'sv_nl' ? 'sv' : 'nl'
+    const currentItem = queue[currentIndex]
+
+    useEffect(() => {
+        if (status === 'answering' && queue.length > 0 && currentIndex < queue.length) {
+            // Determine stable mode for this question
+            const newMode = modeParam === 'mix'
+                ? (Math.random() > 0.5 ? 'choice' : 'type')
+                : modeParam
+
+            setQuestionMode(newMode)
+            setCurrentAnswer("")
+
+            // Generate options if needed
+            if (newMode === 'choice' && currentItem) {
+                const correctAnswer = targetLang === 'nl' ? currentItem.nl_word : currentItem.sv_word
+
+                // Pick 3 random distractors
+                const otherItems = items.filter(i => i.id !== currentItem.id)
+                const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random()).slice(0, 3)
+                const distractors = shuffledOthers.map(i => targetLang === 'nl' ? i.nl_word : i.sv_word)
+
+                const allOptions = [...distractors, correctAnswer].sort(() => 0.5 - Math.random())
+                setOptions(allOptions)
+            }
+        }
+    }, [currentIndex, queue, status, modeParam, items, targetLang])
+
     const questionText = currentItem ? (sourceLang === 'sv' ? currentItem.sv_word : currentItem.nl_word) : ''
     const correctAnswer = currentItem ? (targetLang === 'nl' ? currentItem.nl_word : currentItem.sv_word) : ''
-
-    function generateOptions() {
-        if (effectiveMode !== 'choice') return
-        if (!currentItem) return
-
-        // Pick 3 random distractors
-        const otherItems = items.filter(i => i.id !== currentItem.id)
-        const shuffledOthers = [...otherItems].sort(() => 0.5 - Math.random()).slice(0, 3)
-        const distractors = shuffledOthers.map(i => targetLang === 'nl' ? i.nl_word : i.sv_word)
-
-        const allOptions = [...distractors, correctAnswer].sort(() => 0.5 - Math.random())
-        setOptions(allOptions)
-    }
 
     function handleCheck(answer?: string) {
         const userAnswer = answer || currentAnswer
@@ -173,7 +175,7 @@ export function PracticeSession() {
                 <CardContent>
                     {status === 'answering' ? (
                         <>
-                            {effectiveMode === 'choice' ? (
+                            {questionMode === 'choice' ? (
                                 <div className="grid grid-cols-1 gap-3">
                                     {options.map(opt => (
                                         <Button key={opt} variant="outline" className="h-14 text-lg" onClick={() => handleCheck(opt)}>
